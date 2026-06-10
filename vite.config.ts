@@ -1,0 +1,13 @@
+import { defineConfig } from 'vite'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
+import wasm from 'vite-plugin-wasm'
+
+export default defineConfig({
+  plugins: [svelte(), wasm()],
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp'
+    }
+  }
+})
