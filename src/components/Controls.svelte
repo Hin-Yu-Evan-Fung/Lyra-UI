@@ -79,7 +79,7 @@
     {$game?.autoReply
         ? 'bg-emerald-600/20 border-emerald-500 text-emerald-400 hover:bg-emerald-600/30'
         : 'bg-neutral-900/50 border-neutral-700 text-neutral-400 hover:bg-neutral-900'}"
-      ><span>AutoMove</span>
+      ><span>AutoReply</span>
       <span
         class="text-xs uppercase font-bold tracking-wider px-1.5 py-0.5 rounded {$game?.autoReply
           ? 'bg-emerald-500 text-neutral-950'

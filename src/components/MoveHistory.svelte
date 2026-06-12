@@ -24,7 +24,7 @@
   <div
     class="text-xs text-neutral-400 font-bold uppercase tracking-wider select-none"
   >
-    PGN
+    Move History
   </div>
 
   <div

@@ -4,11 +4,6 @@ import wasm from 'vite-plugin-wasm'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  base: '/Lyra-UI/',
   plugins: [svelte(), wasm(), tailwindcss()],
-  server: {
-    headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'require-corp'
-    }
-  }
 })

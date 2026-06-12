@@ -55,7 +55,7 @@
           <h1 class="text-xl font-bold">Lyra Chess Engine</h1>
         </div>
 
-        <div class="p-2 shrink-0">
+        <div class="p-2">
           <InputPanel />
         </div>
 
