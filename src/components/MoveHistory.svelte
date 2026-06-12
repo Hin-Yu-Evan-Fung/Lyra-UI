@@ -19,10 +19,10 @@
 </script>
 
 <div
-  class="bg-neutral-800 p-3 rounded border border-neutral-700 h-28 flex flex-col gap-1.5 w-full"
+  class="bg-neutral-800 p-3 rounded border border-neutral-700 h-full flex flex-1 flex-col gap-1.5 w-full"
 >
   <div
-    class="text-[10px] text-neutral-400 font-bold uppercase tracking-wider select-none"
+    class="text-xs text-neutral-400 font-bold uppercase tracking-wider select-none"
   >
     PGN
   </div>

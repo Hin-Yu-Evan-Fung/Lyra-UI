@@ -1,15 +1,16 @@
 <script>
   import { onMount } from "svelte";
 
-  import InputPanel from "./components/inputPanel.svelte";
   import Board from "./components/Board.svelte";
   import Controls from "./components/Controls.svelte";
   import DepthInfo from "./components/DepthInfo.svelte";
+  import EvalBar from "./components/EvalBar.svelte";
+  import InputPanel from "./components/InputPanel.svelte";
   import MoveHistory from "./components/MoveHistory.svelte";
 
   import { Game } from "./lib/game";
   import { Engine } from "./lib/engine";
-  import { depthInfo, engine, game } from "./lib/stores";
+  import { depthInfo, engine, game, boardHeight, board } from "./lib/stores";
 
   engine.set(new Engine());
   game.set(new Game());
@@ -27,6 +28,9 @@
         hashfull,
         pv,
       });
+
+      const bestMove = pv.split(" ")[0];
+      if (bestMove) $board.showArrow(bestMove);
     },
   );
 
@@ -42,38 +46,40 @@
 {:else}
   {#await initPromise}
     <div class="loading-screen">
-      <h2>Loading Stockfish/Chess Engine...</h2>
+      <h2>Loading Lyra...</h2>
     </div>
   {:then}
     <main>
-      <div class="flex flex-col hoverflow-hidden h-screen bg-gray text-white">
-        <div class="h-full">
-          <h1>Lyra Chess Engine</h1>
+      <div class="flex flex-col overflow-x-hidden h-screen bg-gray text-white">
+        <div class="p-2 shrink-0">
+          <h1 class="text-xl font-bold">Lyra Chess Engine</h1>
         </div>
 
-        <div class=" p-2">
+        <div class="p-2 shrink-0">
           <InputPanel />
         </div>
 
-        <!-- Middle: eval bar + board + side panel -->
         <div
-          class="flex sm:flex-col md: flex-col lg:flex-row flex-1 items-center justify-center gap-4 p-4"
+          class="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 p-4 items-start"
         >
-          <!-- <EvalBar /> -->
-          <Board />
-          <div class="flex flex-col gap-4 w-64 w-full self-start">
+          <!-- board + eval bar together -->
+          <div class="flex flex-row gap-4 items-stretch w-full">
+            <div class="flex flex-col justify-stretch self-stretch w-4">
+              <EvalBar />
+            </div>
+            <Board />
+          </div>
+
+          <!-- side panel -->
+          <div
+            class="flex flex-col gap-4 w-full lg:w-72"
+            style="height: {$boardHeight}px"
+          >
             <Controls />
             <DepthInfo />
             <MoveHistory />
           </div>
         </div>
-
-        <!-- Bottom: PGN output -->
-        <div class="p-2">
-          <!-- <PgnOutput /> -->
-        </div>
-
-        <div class="h-full"></div>
       </div>
     </main>
   {:catch error}

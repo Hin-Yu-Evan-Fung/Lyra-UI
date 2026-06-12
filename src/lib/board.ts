@@ -3,21 +3,9 @@
 import { Chessground } from 'chessground';
 import type { Api } from 'chessground/api';
 import type { Key } from 'chessground/types';
-import { engine, game } from './stores';
+import { boardHeight, game, gameStatus } from './stores';
 import { get } from 'svelte/store';
-import { updateGameState } from './utils';
-
-function movePlayed(from: Key, to: Key) {
-  const g = get(game);
-  const e = get(engine);
-
-  if (!g) return;
-
-  g.move(from, to);
-
-  if (g.autoReply)
-    e?.goMoveTime(1000);
-}
+import { movePlayed, updateGameState } from './utils';
 
 export class Board {
   #cg: Api | null = null;
@@ -35,7 +23,11 @@ export class Board {
       }
     });
 
-    const ro = new ResizeObserver(() => this.#cg?.redrawAll());
+    const ro = new ResizeObserver((entries) => {
+      boardHeight.set(entries[0].contentRect.height)
+      this.#cg?.redrawAll();
+    });
+
     ro.observe(el);
 
     updateGameState();
@@ -44,14 +36,25 @@ export class Board {
   update(): void {
     const g = get(game);
     const turn = g?.turn === 'w' ? 'white' : 'black';
+    const over = !!get(gameStatus);
+
+    let lastMove = undefined;
+
+    if (g) {
+      const hist = g.history_verbose;
+      const last = hist[hist.length - 1];
+      lastMove = hist.length > 1 ? [last.from, last.to] : undefined;
+    }
 
     this.#cg?.set({
       fen: g?.fen,
       turnColor: turn,
+      lastMove: lastMove,
+      selected: undefined,
       movable: {
-        color: turn,
-        dests: g?.dests()
-      }
+        color: over ? undefined : turn,
+        dests: over ? new Map() : g?.dests()
+      },
     });
   }
 
@@ -61,6 +64,16 @@ export class Board {
 
   destroy(): void {
     this.#cg?.destroy();
+  }
+
+  showArrow(move: string): void {
+    const from = move.slice(0, 2) as Key;
+    const to = move.slice(2, 4) as Key;
+    this.#cg?.setShapes([{
+      orig: from,
+      dest: to,
+      brush: 'green'
+    }]);
   }
 }
 

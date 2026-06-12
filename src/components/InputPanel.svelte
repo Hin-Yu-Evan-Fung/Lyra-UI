@@ -1,23 +1,26 @@
 <script>
-  import { game, engine, board } from "../lib/stores";
+  import { game, engine, board, currentFen } from "../lib/stores";
   import { normaliseFen, startPosFen } from "../lib/utils";
 
-  let fen = $game.fen || startPosFen;
   let error = "";
 
   function onFenSubmit() {
     error = "";
 
-    console.log("Setting position");
     try {
-      const normalised = normaliseFen(fen);
+      const normalised = normaliseFen($currentFen);
       $game.load(normalised);
       $engine.setPosition(normalised);
-      fen = normalised;
+      $currentFen = normalised;
       error = "";
     } catch (e) {
       error = e.message || "Failed to parse FEN string.";
     }
+  }
+
+  function newGame() {
+    $game.load(startPosFen);
+    $engine.setPosition(startPosFen);
   }
 
   // Toggles a state variable on your game store to invert the board rendering orientation
@@ -34,7 +37,7 @@
   <div class="flex flex-row bg-gray-700 w-full rounded">
     <input
       type="text"
-      bind:value={fen}
+      bind:value={$currentFen}
       class="flex-1 text-sm rounded px-2 py-1 items-center focus:outline-none"
     />
     {#if error}
@@ -47,9 +50,15 @@
   </div>
   <button
     on:click={onFenSubmit}
-    class="bg-blue-600 hover:bg-blue-500 text-sm font-semibold px-4 py-1.5 rounded transition"
+    class="bg-blue-600 hover:bg-blue-500 text-sm px-3 py-1.5 rounded transition"
   >
     Load
+  </button>
+  <button
+    on:click={newGame}
+    class="bg-blue-600 hover:bg-blue-500 text-sm px-3 py-1.5 rounded transition"
+  >
+    Reset
   </button>
   <button
     on:click={handleFlipBoard}

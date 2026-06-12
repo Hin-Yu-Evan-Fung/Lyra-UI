@@ -12,6 +12,7 @@
         <tr class="text-gray-400 text-xs">
           <th class="w-8 text-center pr-3">Depth</th>
           <th class="w-8 text-center pr-3">Sel</th>
+          <th class="w-8 text-center pr-3">Time</th>
           <th class="w-8 text-center pr-3">Score</th>
           <th class="w-16 text-center pr-3">Nodes</th>
           <th class="w-16 text-center pr-3">NPS</th>
@@ -22,6 +23,9 @@
         <tr class="text-white">
           <td class="text-center pr-3">{$depthInfo.depth}</td>
           <td class="text-center pr-3">{$depthInfo.seldepth}</td>
+          <td class="text-center pr-3"
+            >{($depthInfo.time / 1000).toFixed(1)}s</td
+          >
           <td class="text-center pr-3">{formatEval($depthInfo.eval_)}</td>
           <td class="text-center pr-3"
             >{($depthInfo.nodes / 1000000).toFixed(1)}M</td
@@ -38,5 +42,5 @@
     </div>
   </div>
 {:else}
-  <div class="text-gray-500 text-sm w-90">No search data</div>
+  <div class="text-gray-500 text-sm w-full text-center">No search data</div>
 {/if}

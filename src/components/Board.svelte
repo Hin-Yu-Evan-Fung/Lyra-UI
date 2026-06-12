@@ -4,7 +4,7 @@
   import "chessground/assets/chessground.base.css";
   import "chessground/assets/chessground.brown.css";
   import "chessground/assets/chessground.cburnett.css";
-  import { board } from "../lib/stores";
+  import { board, gameStatus } from "../lib/stores";
 
   let boardEl: HTMLElement;
 
@@ -17,4 +17,18 @@
   onDestroy(() => $board?.destroy());
 </script>
 
-<div class="aspect-square w-full min-h-0" bind:this={boardEl}></div>
+<div class="flex flex-col gap-2 w-full">
+  <div
+    class="relative transition-all duration-300"
+    class:grayscale={$gameStatus}
+    class:opacity-60={$gameStatus}
+    bind:this={boardEl}
+    style="width: 100%; aspect-ratio: 1"
+  ></div>
+
+  {#if $gameStatus}
+    <div class="text-center py-2 bg-gray-800 rounded-lg">
+      <p class="text-white font-bold text-lg">{$gameStatus}</p>
+    </div>
+  {/if}
+</div>
