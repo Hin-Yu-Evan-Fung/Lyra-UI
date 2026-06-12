@@ -9,11 +9,14 @@ export interface LyraWasmInstance {
   goTime(wtime: number, btime: number, winc: number, binc: number): void;
   goInfinite(): void;
   formatEval(eval_: number): string;
+  stop(); void;
 }
 
 export interface LyraModule {
   initialise(): void;
+  get_stop_flag_address(): number;
   LyraWasm: new () => LyraWasmInstance;
+  HEAP8: Int8Array;
 }
 
 declare const LyraWasm: () => Promise<LyraModule>;

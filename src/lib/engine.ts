@@ -41,5 +41,6 @@ export class Engine {
   goDepth(depth: number): void { this.#worker?.postMessage({ type: 'goDepth', depth }); }
   goInfinite(): void { this.#worker?.postMessage({ type: 'goInfinite' }); }
   goTime(wtime: number, btime: number, winc: number, binc: number) { this.#worker?.postMessage({ type: 'goTime', wtime, btime, winc, binc }); }
+  stop(): void { this.#worker?.postMessage({ type: 'stop' }); }
 }
 

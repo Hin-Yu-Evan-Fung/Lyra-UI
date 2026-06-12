@@ -3,57 +3,60 @@
 import { Chessground } from 'chessground';
 import type { Api } from 'chessground/api';
 import type { Key } from 'chessground/types';
-import type { Game } from './game';
-import type { Engine } from './engine';
+import { engine, game } from './stores';
+import { get } from 'svelte/store';
+import { updateGameState } from './utils';
+
+function movePlayed(from: Key, to: Key) {
+  const g = get(game);
+  const e = get(engine);
+
+  if (!g) return;
+
+  g.move(from, to);
+
+  if (g.autoReply)
+    e?.goMoveTime(1000);
+}
 
 export class Board {
   #cg: Api | null = null;
-  #game: Game;
-  #engine: Engine;
-
-  constructor(game: Game, engine: Engine) {
-    this.#game = game;
-    this.#engine = engine;
-  }
 
   init(el: HTMLElement): void {
+    const g = get(game);
     this.#cg = Chessground(el, {
       movable: {
         color: 'white',
         free: false,
-        dests: this.#game.dests(),
+        dests: g?.dests(),
         events: {
-          after: (from: Key, to: Key) => this.#onMove(from, to)
+          after: (from: Key, to: Key) => movePlayed(from, to)
         }
       }
     });
+
+    const ro = new ResizeObserver(() => this.#cg?.redrawAll());
+    ro.observe(el);
+
+    updateGameState();
   }
 
-  #onMove(from: Key, to: Key): void {
-    this.#game.move(from, to);
-    this.#engine.setPosition(this.#game.fen);
-    this.#update();
-    this.#engine.goMoveTime(5000);
-  }
+  update(): void {
+    const g = get(game);
+    const turn = g?.turn === 'w' ? 'white' : 'black';
 
-  #update(): void {
-    const turn = this.#game.turn === 'w' ? 'white' : 'black';
-    console.log(this.#game.fen)
     this.#cg?.set({
-      fen: this.#game.fen,
+      fen: g?.fen,
       turnColor: turn,
       movable: {
         color: turn,
-        dests: this.#game.dests()
+        dests: g?.dests()
       }
     });
   }
 
-  playMove(move: string): void {
-    const from = move.slice(0, 2) as Key;
-    const to = move.slice(2, 4) as Key;
-    this.#game.move(from, to);
-    this.#update();
+  flip() {
+    this.#cg?.toggleOrientation();
   }
 
   destroy(): void {
