@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { engine, game, gameStatus, searchConfig } from "../lib/stores";
+  import {
+    engine,
+    game,
+    gameStatus,
+    searchConfig,
+    showPromotion,
+  } from "../lib/stores";
   import { engineGo } from "../lib/utils";
 
   function takeBack() {
@@ -18,14 +24,16 @@
       <input
         type="number"
         bind:value={$searchConfig.movetime}
-        class="bg-gray-700 rounded px-2 py-1 w-full"
+        class="bg-gray-700 rounded px-2 py-1 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={!!$showPromotion}
         placeholder="ms"
       />
     {:else if $searchConfig.mode === "depth"}
       <input
         type="number"
         bind:value={$searchConfig.depth}
-        class="bg-gray-700 rounded px-2 py-1 w-full"
+        class="bg-gray-700 rounded px-2 py-1 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={!!$showPromotion}
         placeholder="depth"
       />
     {/if}
@@ -36,21 +44,24 @@
       class="flex-1 p-1 rounded hover:bg-blue-500 {$searchConfig.mode ===
       'movetime'
         ? 'bg-blue-600'
-        : 'bg-gray-700'}"
+        : 'bg-gray-700'} disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={!!$showPromotion}
       onclick={() => ($searchConfig.mode = "movetime")}>Time</button
     >
     <button
       class="flex-1 p-1 rounded hover:bg-blue-500 {$searchConfig.mode ===
       'depth'
         ? 'bg-blue-600'
-        : 'bg-gray-700'}"
+        : 'bg-gray-700'} disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={!!$showPromotion}
       onclick={() => ($searchConfig.mode = "depth")}>Depth</button
     >
     <button
       class="flex-1 p-1 rounded hover:bg-blue-500 {$searchConfig.mode ===
       'infinite'
         ? 'bg-blue-600'
-        : 'bg-gray-700'}"
+        : 'bg-gray-700'} disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={!!$showPromotion}
       onclick={() => ($searchConfig.mode = "infinite")}>∞</button
     >
   </div>
@@ -58,20 +69,21 @@
   <div class="grid grid-cols-2 gap-2">
     <button
       onclick={engineGo}
-      class="bg-green-600 rounded py-1 w-full"
-      class:grayscale={$gameStatus}
-      class:opacity-60={$gameStatus}
-      disabled={!!$gameStatus}>Go</button
+      class="bg-green-600 rounded py-1 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={!!$gameStatus || !!$showPromotion}>Go</button
     >
     <button
       onclick={takeBack}
-      class="bg-gray-600 rounded py-1 w-full hover:bg-gray-500"
+      disabled={!!$showPromotion}
+      class="bg-gray-600 rounded py-1 w-full hover:bg-gray-500 disabled:opacity-50 disable:bg-gray-600 disabled:cursor-not-allowed"
     >
       Takeback
     </button>
     <button
       onclick={() => $engine?.stop()}
-      class="bg-red-600 rounded py-1 w-full">Stop</button
+      disabled={!!$gameStatus || !!$showPromotion}
+      class="bg-red-600 rounded py-1 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+      >Stop</button
     >
     <button
       onclick={toggleAutoReply}

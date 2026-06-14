@@ -2,10 +2,10 @@
 
 import { Chessground } from 'chessground';
 import type { Api } from 'chessground/api';
-import type { Key } from 'chessground/types';
+import type { Key, Piece } from 'chessground/types';
 import { boardHeight, game, gameStatus } from './stores';
 import { get } from 'svelte/store';
-import { movePlayed, updateGameState } from './utils';
+import { handleMove, updateGameState } from './utils';
 
 export class Board {
   #cg: Api | null = null;
@@ -18,7 +18,7 @@ export class Board {
         free: false,
         dests: g?.dests(),
         events: {
-          after: (from: Key, to: Key) => movePlayed(from, to)
+          after: (from: Key, to: Key) => handleMove(from, to)
         }
       }
     });
@@ -74,6 +74,10 @@ export class Board {
       dest: to,
       brush: 'green'
     }]);
+  }
+
+  lock() {
+    this.#cg?.set({ movable: { color: undefined, dests: new Map() } });
   }
 }
 

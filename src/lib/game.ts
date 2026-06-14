@@ -1,4 +1,4 @@
-import { Chess } from 'chess.js';
+import { Chess, type Color, type PieceSymbol, type Square } from 'chess.js';
 import type { Key } from 'chessground/types';
 import { updateGameState } from './utils';
 import { game } from './stores';
@@ -18,15 +18,14 @@ export class Game {
     game.set(this);
   }
 
-  move(from: Key, to: Key) {
+  move(from: Key, to: Key, promotion?: string) {
     try {
-      const m = this.#chess.move({ from, to });
+      const m = this.#chess.move({ from, to, promotion });
       updateGameState();
       game.set(this);
       return m;
     } catch (e) {
-      // Sliently ignore invalid moves
-      console.log("Illegal Engine Move! Skipping!");
+      console.error(e);
     }
   }
 
@@ -37,7 +36,7 @@ export class Game {
   get isDraw(): boolean { return this.#chess.isDraw(); }
   get isCheckmate(): boolean { return this.#chess.isCheckmate(); }
   get isStalemate(): boolean { return this.#chess.isStalemate(); }
-  get turn(): string { return this.#chess.turn(); }
+  get turn(): Color { return this.#chess.turn(); }
 
   get gameStatus(): string {
     if (this.#chess.isCheckmate())
@@ -47,6 +46,11 @@ export class Game {
     if (this.#chess.isThreefoldRepetition()) return 'Draw by repetition';
     if (this.#chess.isDraw()) return 'Draw by 50 move rule';
     return '';
+  }
+
+  isPawnPromotion(from: string, to: string): boolean {
+    const piece = this.#chess.get(from as Square);
+    return piece?.type === 'p' && (to[1] === '8' || to[1] === '1');
   }
 
   dests() {
@@ -64,7 +68,8 @@ export class Game {
   playMove(move: string): void {
     const from = move.slice(0, 2) as Key;
     const to = move.slice(2, 4) as Key;
-    this.move(from, to);
+    const promotion = move.slice(4, 5) || undefined;
+    this.move(from, to, promotion);
     updateGameState();
   }
 

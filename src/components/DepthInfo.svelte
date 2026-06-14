@@ -5,7 +5,7 @@
 
 {#if $depthInfo}
   <div
-    class="bg-gray-800 flex flex-col gap-4 w-full shrink-0 rounded-lg p-3 font-mono text-sm"
+    class="bg-gray-800 flex flex-col gap-4 min-w-90 shrink-0 rounded-lg p-3 font-mono text-sm"
   >
     <table class="w-full board-separate board-spacing-y-1">
       <thead>
@@ -26,7 +26,7 @@
           <td class="text-center pr-3"
             >{($depthInfo.time / 1000).toFixed(1)}s</td
           >
-          <td class="text-center pr-3">{formatEval($depthInfo.eval_)}</td>
+          <td class="text-center pr-3">{formatEval($depthInfo.normalised)}</td>
           <td class="text-center pr-3"
             >{($depthInfo.nodes / 1000000).toFixed(1)}M</td
           >
@@ -42,5 +42,5 @@
     </div>
   </div>
 {:else}
-  <div class="text-gray-500 text-sm w-full text-center">No search data</div>
+  <div class="text-gray-500 text-sm min-w-90 text-center">No search data</div>
 {/if}

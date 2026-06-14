@@ -4,7 +4,6 @@
   import Board from "./components/Board.svelte";
   import Controls from "./components/Controls.svelte";
   import DepthInfo from "./components/DepthInfo.svelte";
-  import EvalBar from "./components/EvalBar.svelte";
   import InputPanel from "./components/InputPanel.svelte";
   import MoveHistory from "./components/MoveHistory.svelte";
 
@@ -18,10 +17,11 @@
   $engine.onBestMove((move) => $game.playMove(move));
   $engine.onDepthFinished(
     (depth, seldepth, eval_, time, nodes, nps, hashfull, pv) => {
+      const normalised = $game.turn === "b" ? -eval_ : eval_;
       depthInfo.set({
         depth,
         seldepth,
-        eval_,
+        normalised,
         time,
         nodes,
         nps,
@@ -62,17 +62,10 @@
         <div
           class="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 p-4 items-start"
         >
-          <!-- board + eval bar together -->
-          <div class="flex flex-row gap-4 items-stretch w-full">
-            <div class="flex flex-col justify-stretch self-stretch w-4">
-              <EvalBar />
-            </div>
-            <Board />
-          </div>
-
+          <Board />
           <!-- side panel -->
           <div
-            class="flex flex-col gap-4 w-full lg:w-72"
+            class="flex flex-col gap-4 min-w-90 lg:w-90"
             style="height: {$boardHeight}px"
           >
             <Controls />

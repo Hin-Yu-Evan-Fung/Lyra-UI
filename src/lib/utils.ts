@@ -1,9 +1,10 @@
 import { get } from "svelte/store";
-import { board, currentFen, engine, game, gameStatus, searchConfig } from "./stores";
+import { board, currentFen, engine, game, gameStatus, searchConfig, showPromotion } from "./stores";
 import type { Key } from "chessground/types";
 
-export const EvalMate = 32000;
-export const EvalMateBound = 31000;
+const MaxDepth = 256;
+export const EvalMate = 29000;
+export const EvalMateBound = EvalMate - MaxDepth;
 
 export const startPosFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -47,15 +48,36 @@ export function updateGameState() {
   b?.update();
 }
 
-export function movePlayed(from: Key, to: Key) {
+export function handleMove(from: Key, to: Key) {
   const g = get(game);
+  const b = get(board);
 
   if (!g) return;
 
-  g.move(from, to);
+  const isPromotion = g.isPawnPromotion(from, to);
+
+  if (isPromotion) {
+    b?.lock();
+    showPromotion.set({
+      from,
+      to,
+      color: g.turn
+    });
+    return;
+  }
+
+  completeMove(from, to);
+}
+
+export function completeMove(from: Key, to: Key, promotion?: string) {
+  const g = get(game);
+  if (!g) return;
+
+  g.move(from, to, promotion);
 
   if (g.autoReply)
     engineGo();
+
 }
 
 export function engineGo() {

@@ -7,7 +7,7 @@ import { startPosFen } from "./utils";
 export interface DepthInfo {
   depth: number;
   seldepth: number;
-  eval_: number;
+  normalised: number;
   time: number;
   nodes: number;
   nps: number;
@@ -29,3 +29,12 @@ export const searchConfig = writable({
 
 export const gameStatus = writable<string>('');
 export const currentFen = writable<string>(startPosFen);
+
+
+interface PromotionState {
+  from: string;
+  to: string;
+  color: 'w' | 'b';
+};
+
+export const showPromotion = writable<PromotionState | null>(null);
